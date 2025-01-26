@@ -1,39 +1,50 @@
-const tmdbClient = require('../utils/tmdb')
+const makeRequest = require('../utils/tmdb');
+const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'; // Base URL for movie posters (w500 is the image size)
+
 
 const fetchHorrorAndThrillerMovies = async () => {
-    const genreIds = [27, 53] // horror: 27, Thriller: 53
-    const tmdb = tmdbClient();
+  const genreIds = [27, 53]; // Horror: 27, Thriller: 53
 
-    try {
-        const discover = tmdb.getDiscoverSection();
-        const response = await discover.discoverMoviesAsync({
-                with_genres: genreIds.join(','),
-                sort_by: 'release_date.desc',
-            });
+  try {
+    const response = await makeRequest('/discover/movie', {
+      with_genres: genreIds.join(','),
+      sort_by: 'release_date.desc',
+      include_adult: true,
+      include_video: true,
+      language: 'en-US',
+    });
 
-            return response.results;
-    } catch (error) {
-        console.error('Error fetching horror and thriller movies', error)
-        throw error;
-    }
+    return response.results.map((movie) => ({
+        id: movie.id,
+        title: movie.title,
+        release_date: movie.release_date,
+        popularity: movie.popularity,
+        vote_average: movie.vote_average,
+        overview: movie.overview,
+        image: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
+    }));
+  } catch (error) {
+    console.error('Error fetching horror and thriller movies:', error);
+    throw error;
+  }
 };
 
-
 const searchMovies = async (query) => {
-    const tmdb = tmdbClient();
+  try {
+    const response = await makeRequest('/search/movie', {
+      query,
+      language: 'en-US',
+      include_adult: false,
+    });
 
-    try {
-        const search = tmdb.getSearch();
-        const response = await search.SearchMoviesAsync(query);
-
-        return response.results;
-    } catch (error) {
-        console.error('Error searching for movies')
-        throw error;
-    }
+    return response.results;
+  } catch (error) {
+    console.error('Error searching for movies:', error);
+    throw error;
+  }
 };
 
 module.exports = {
-    fetchHorrorAndThrillerMovies,
-    searchMovies,
+  fetchHorrorAndThrillerMovies,
+  searchMovies,
 };

@@ -8,6 +8,7 @@ import {
     filterMoviesByRating,
     filterMoviesByName,
 } from '../utils/movieFilters'; // Filters
+import FilterModal from './filterModal';
 
 const HorrorMovies = () => {
     const [movies, setMovies] = useState([]);
@@ -15,6 +16,7 @@ const HorrorMovies = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [year, setYear] = useState('');
     const [rating, setRating] = useState('');
+    const [showModal, setShowModal] = useState(false); // For Modal Visibility
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -53,46 +55,42 @@ const HorrorMovies = () => {
         }
 
         setFilteredMovies(filtered);
+        setShowModal(false); // Close modal after applying filters
     };
 
     return (
         <div>
             <h1>Horror & Thriller Movies</h1>
 
-            {/* Filters */}
-            <div>
-                <input
-                    type="text"
-                    placeholder="Search by name"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button onClick={handleSearch}>Search</button>
-
-                <input
-                    type="number"
-                    placeholder="Year (e.g. 2023)"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                />
-                <input
-                    type="number"
-                    placeholder="Rating (e.g. 7.5)"
-                    step="0.1"
-                    value={rating}
-                    onChange={(e) => setRating(e.target.value)}
-                />
-                <button onClick={handleFilter}>Filter</button>
-            </div>
-
             {/* Movie List */}
-            <ul>
+            <ul style={{ listStyle: 'none', padding: 0 }}>
                 {filteredMovies.map((movie) => (
-                    <li key={movie.id}>
-                        <strong>{movie.title}</strong> ({movie.release_date}) - Rating: {movie.vote_average}
+                    <li key={movie.id} style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+                        <img
+                            src={movie.image || 'https://via.placeholder.com/150x225?text=No+Image'}
+                            alt={movie.title}
+                            style={{
+                                width: '150px',
+                                height: '225px',
+                                marginRight: '15px',
+                                objectFit: 'cover',
+                                borderRadius: '8px',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                            }}
+                        />
+                        <div>
+                            <strong>{movie.title}</strong> ({movie.release_date})<br />
+                            Rating: {movie.vote_average} / 10
+                            <p style={{ marginTop: '10px', maxWidth: '600px', fontSize: '0.9em', color: '#555' }}>
+                                {movie.overview || 'No description available.'}
+                            </p>
+                        </div>
                     </li>
                 ))}
             </ul>
+
+            {/* Include FilterModal component here */}
+            <FilterModal showModal={showModal} setShowModal={setShowModal} handleFilter={handleFilter} />
         </div>
     );
 };

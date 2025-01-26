@@ -1,77 +1,38 @@
-class TMDBClient {
-    constructor() {
-      this.apiKey = process.env.TMDB_MOVIE_API_READ_KEY;
-      this.baseUrl = 'https://api.themoviedb.org/3';
-  
-      if (!this.apiKey) {
-        throw new Error('API key is required to initialize TMDBClient.');
-      }
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_API_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NGM1ODllMGY4M2E4NjBkNjJkYzBkNjIwNDJjMGQxNCIsIm5iZiI6MTczNzUwNjA2Ny43OTYsInN1YiI6IjY3OTAzZDEzYmU5YTlhYTc4Mjc3NDA5ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.fPrmIVYyeiC6_zDwOFVAv3basg0_nhjdYtCGhSTH4a4'
+
+if (!TMDB_API_TOKEN) {
+  throw new Error('TMDB Bearer Token is required!');
+}
+
+/**
+ * Makes a request to the TMDB API.
+ * @param {string} endpoint - The TMDB API endpoint (e.g., '/discover/movie').
+ * @param {Object} params - Query parameters for the request.
+ * @returns {Promise<Object>} - The JSON response from the API.
+ */
+const makeRequest = async (endpoint, params = {}) => {
+  const queryParams = new URLSearchParams(params).toString();
+  const url = `${TMDB_BASE_URL}${endpoint}?${queryParams}`;
+
+  const options = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${TMDB_API_TOKEN}`,
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`Request to ${endpoint} failed with status ${response.status}`);
     }
-  
-    /**
-     * Makes a GET request to the TMDB API using fetch.
-     * @param {string} endpoint - The TMDB API endpoint (e.g., '/discover/movie').
-     * @param {Object} params - Query parameters for the request.
-     * @returns {Promise<Object>} - The response data from the API.
-     */
-    async request(endpoint, params = {}) {
-      try {
-        // Build query string from params
-        const queryParams = new URLSearchParams({
-          api_key: this.apiKey,
-          ...params,
-        }).toString();
-  
-        const url = `${this.baseUrl}${endpoint}?${queryParams}`;
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-          },
-        });
-  
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-  
-        return await response.json();
-      } catch (error) {
-        console.error(`Error making request to TMDB API: ${error.message}`);
-        throw error;
-      }
-    }
-  
-    /**
-     * Fetches the list of official genres for movies.
-     * @param {string} language - Language for genre names (default: 'en-US').
-     * @returns {Promise<Array>} - Array of genres.
-     */
-    async fetchMovieGenres(language = 'en-US') {
-      try {
-        const { genres } = await this.request('/genre/movie/list', { language });
-        return genres;
-      } catch (error) {
-        console.error('Error fetching movie genres:', error);
-        throw error;
-      }
-    }
-  
-    /**
-     * Fetches specific genres by their names.
-     * @param {Array<string>} genreNames - List of genre names (e.g., ['Horror', 'Thriller']).
-     * @param {string} language - Language for genre names (default: 'en-US').
-     * @returns {Promise<Array>} - Array of genres that match the specified names.
-     */
-    async fetchSpecificGenres(genreNames, language = 'en-US') {
-      try {
-        const allGenres = await this.fetchMovieGenres(language);
-        return allGenres.filter((genre) => genreNames.includes(genre.name));
-      } catch (error) {
-        console.error('Error fetching specific genres:', error);
-        throw error;
-      }
-    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Error in TMDB API request: ${error.message}`);
+    throw error;
   }
-  
-  module.exports = TMDBClient;
-  
+};
+
+module.exports =  makeRequest;

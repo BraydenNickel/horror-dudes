@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Navbar, Nav, Container } from "react-bootstrap";
+import '../styles/navbar.css';
 
 
 import '../styles/navbar.css';
@@ -9,7 +10,7 @@ function NavbarBootstrap() {
     const location = useLocation();
 
     return (
-        <Navbar bg="dark" variant="dark" expand="lg">
+        <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
             <Container>
                 <Navbar.Brand href="/">Horror Dudes</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"></Navbar.Toggle>
