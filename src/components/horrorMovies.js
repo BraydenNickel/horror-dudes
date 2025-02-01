@@ -8,6 +8,7 @@ import {
     filterMoviesByRating,
     filterMoviesByName,
 } from '../utils/movieFilters'; // Filters
+import '../styles/movies.css'; // Styles 
 import FilterModal from './filterModal';
 
 const HorrorMovies = () => {
@@ -16,7 +17,8 @@ const HorrorMovies = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [year, setYear] = useState('');
     const [rating, setRating] = useState('');
-    const [showModal, setShowModal] = useState(false); // For Modal Visibility
+    const [showModal, setShowModal] = useState(false); 
+    const [expandMovies, setExpandMovies] = useState({});
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -58,41 +60,53 @@ const HorrorMovies = () => {
         setShowModal(false); // Close modal after applying filters
     };
 
+    const showExpand = (id, e) => {
+        e.stopPropagation();
+        setExpandMovies((prev) => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    }
+
     return (
         <div>
-            <h1>Horror & Thriller Movies</h1>
+            <ul className="movie-list">
+                {filteredMovies.map((movie) => {
+                    const isExpanded = expandMovies[movie.id];
 
-            {/* Movie List */}
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-                {filteredMovies.map((movie) => (
-                    <li key={movie.id} style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
-                        <img
-                            src={movie.image || 'https://via.placeholder.com/150x225?text=No+Image'}
-                            alt={movie.title}
-                            style={{
-                                width: '150px',
-                                height: '225px',
-                                marginRight: '15px',
-                                objectFit: 'cover',
-                                borderRadius: '8px',
-                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                            }}
-                        />
-                        <div>
-                            <strong>{movie.title}</strong> ({movie.release_date})<br />
-                            Rating: {movie.vote_average} / 10
-                            <p style={{ marginTop: '10px', maxWidth: '600px', fontSize: '0.9em', color: '#555' }}>
-                                {movie.overview || 'No description available.'}
-                            </p>
-                        </div>
-                    </li>
-                ))}
+                    return (
+                        <li 
+                            key={movie.id} 
+                            className={`movie-item ${isExpanded ? "expanded" : ""}`}
+                        >
+                            <img
+                                src={movie.image || "https://via.placeholder.com/150x225?text=No+Image"}
+                                alt={movie.title}
+                                className="movie-image"
+                            />
+                            <div className="movie-details">
+                                <div className="movie-title">{movie.title}</div>
+                                <div>({movie.release_date})</div>
+                                <div className="movie-rating">Rating: {movie.vote_average} / 10</div>
+                                <p className="movie-description">
+                                    {movie.overview || "No description available."}
+                                </p>
+                                {movie.overview && movie.overview.length > 50 && (
+                                    <button 
+                                        className="show-more" 
+                                        onClick={(e) => showExpand(movie.id, e)}
+                                    >
+                                        {isExpanded ? "Show Less" : "Show More"}
+                                    </button>
+                                )}
+                            </div>
+                        </li>
+                    );
+                })}
             </ul>
-
-            {/* Include FilterModal component here */}
             <FilterModal showModal={showModal} setShowModal={setShowModal} handleFilter={handleFilter} />
         </div>
     );
 };
 
-export default HorrorMovies;
+export default HorrorMovies

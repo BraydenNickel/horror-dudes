@@ -1,17 +1,21 @@
 import React from "react";
-import { NavLink, useLocation } from "react-router-dom";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import '../styles/navbar.css';
+import reaperLogo from "../images/reaper.png";
 
 
 import '../styles/navbar.css';
 
 function NavbarBootstrap() {
-    const location = useLocation();
 
     return (
-        <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
+        <Navbar style={{ backgroundColor: "#732D3A"}} variant="dark" expand="lg" fixed="top">
             <Container>
+                <img
+                    src={reaperLogo}
+                    alt="Horror Dudes Logo"
+                    className="navbar-logo"
+                />
                 <Navbar.Brand href="/">Horror Dudes</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"></Navbar.Toggle>
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -24,5 +28,4 @@ function NavbarBootstrap() {
         </Navbar>
     )
 }
-
 export default NavbarBootstrap

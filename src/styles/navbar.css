@@ -1,3 +1,8 @@
 body {
-    padding-top: 56px;
+    padding-top: 72px;
 }
+.navbar-logo {
+    height: 50px;  /* Adjust height as needed */
+    width: auto;   /* Keeps aspect ratio */
+    margin-right: 10px;
+  }

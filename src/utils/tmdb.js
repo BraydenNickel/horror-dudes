@@ -1,5 +1,5 @@
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_API_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NGM1ODllMGY4M2E4NjBkNjJkYzBkNjIwNDJjMGQxNCIsIm5iZiI6MTczNzUwNjA2Ny43OTYsInN1YiI6IjY3OTAzZDEzYmU5YTlhYTc4Mjc3NDA5ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.fPrmIVYyeiC6_zDwOFVAv3basg0_nhjdYtCGhSTH4a4'
+const TMDB_API_TOKEN = process.env.REACT_APP_TMDB_MOVIE_API_READ_KEY;
 
 if (!TMDB_API_TOKEN) {
   throw new Error('TMDB Bearer Token is required!');
