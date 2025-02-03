@@ -84,3 +84,19 @@
     margin-top: 5px;
     align-self: flex-start;
 }
+
+.load-more {
+    background-color: #e50914;
+    color: white;
+    padding: 10px 20px;
+    margin: 20px auto;
+    border: none;
+    cursor: pointer;
+    display: block;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.load-more:hover {
+    background-color: #b20710;
+}

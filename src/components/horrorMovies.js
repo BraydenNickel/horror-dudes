@@ -19,20 +19,33 @@ const HorrorMovies = () => {
     const [rating, setRating] = useState('');
     const [showModal, setShowModal] = useState(false); 
     const [expandMovies, setExpandMovies] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        const fetchMovies = async () => {
-            try {
-                const movies = await fetchHorrorAndThrillerMovies();
-                setMovies(movies);
-                setFilteredMovies(movies);
-            } catch (error) {
-                console.error('Error fetching movies:', error);
-            }
-        };
-
-        fetchMovies();
+        fetchMovies(1);
     }, []);
+
+    const fetchMovies = async (page) => {
+        try {
+            const { movies: newMovies, total_pages } = await fetchHorrorAndThrillerMovies(page);
+            setMovies((prevMovies) => [...prevMovies, ...newMovies]); // Append new results
+            setFilteredMovies((prevMovies) => [...prevMovies, ...newMovies]); // Update filtered list
+            setTotalPages(total_pages);
+        } catch (error) {
+            console.error('Error fetching movies:', error);
+        }
+    };
+
+    const handleShowMore = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage((prevPage) => {
+                const nextPage = prevPage + 1;
+                fetchMovies(nextPage);
+                return nextPage;
+            });
+        }
+    };
 
     const handleSearch = async () => {
         if (searchQuery) {
@@ -104,6 +117,11 @@ const HorrorMovies = () => {
                     );
                 })}
             </ul>
+            {currentPage < totalPages && (
+                <button className='load-more' onClick={handleShowMore}>
+                Show More
+                </button>
+            )}
             <FilterModal showModal={showModal} setShowModal={setShowModal} handleFilter={handleFilter} />
         </div>
     );

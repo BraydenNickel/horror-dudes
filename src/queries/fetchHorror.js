@@ -2,7 +2,7 @@ const makeRequest = require('../utils/tmdb');
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'; // Base URL for movie posters (w500 is the image size)
 
 
-const fetchHorrorAndThrillerMovies = async () => {
+const fetchHorrorAndThrillerMovies = async (page = 1) => {
   const genreIds = [27, 53]; // Horror: 27, Thriller: 53
 
   try {
@@ -12,9 +12,11 @@ const fetchHorrorAndThrillerMovies = async () => {
       include_adult: true,
       include_video: true,
       language: 'en-US',
+      page,
     });
 
-    return response.results.map((movie) => ({
+    return {
+        movies: response.results.map((movie) => ({
         id: movie.id,
         title: movie.title,
         release_date: movie.release_date,
@@ -22,7 +24,9 @@ const fetchHorrorAndThrillerMovies = async () => {
         vote_average: movie.vote_average,
         overview: movie.overview,
         image: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
-    }));
+    })),
+    total_pages : response.total_pages
+    };
   } catch (error) {
     console.error('Error fetching horror and thriller movies:', error);
     throw error;
